@@ -59,7 +59,9 @@ a:visited {
 
 header, footer {
     height: 10vh;
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 
@@ -121,13 +123,9 @@ main {
 
 
 
-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .fa-github { 
-    font-size: 25px;
-    margin-left: 15px;
+    font-size: 20px;
+    margin-left: 5px;
+    color: black;
 }
