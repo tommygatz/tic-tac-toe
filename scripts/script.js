@@ -1,17 +1,16 @@
 
-// document.getElementById('reset-game').addEventListener("click", resetGame);
 const newGameBtn = document.getElementById('new-game');
 const playerOneText = document.getElementById('player-one');
 const playerTwoText = document.getElementById('player-two');
 
 newGameBtn.addEventListener("click", newGame); 
 
-var gameBoard = 
-["", "", "",
-"", "", "",
-"", "", ""];
 var players = [];
 var game = [];
+var gameBoard = 
+    ["", "", "",
+    "", "", "",
+    "", "", ""];
 
 const newPlayer = (name, marker) => {
     let pname = name;
@@ -52,21 +51,23 @@ const createPlayers = (numPlayers) => {
     players = [];
     players.push(player1, player2);
 
-    playerOneText.innerHTML = `<h4>${players[0].getPlayerName()}</h4>`;
-    playerTwoText.innerHTML = `<h4>${players[1].getPlayerName()}</h4>`;
+    playerOneText.innerHTML = `<h5>${players[0].getPlayerName()}</h5>`;
+    playerTwoText.innerHTML = `<h5>${players[1].getPlayerName()}</h5>`;
 
     return { players };
 }
 
 function newGame() {
-
+    resetGame();
     initBoardEvents();
 
     const numPlayers = window.prompt("How many players?");
     game = initGame();
     createPlayers(numPlayers);
 
-    // return { players };
+    let pnametemp = players[+game.getTurn()].getPlayerName();
+    let payload = `<h4>${pnametemp}'s turn.</h4>`;
+    updateTextDisplay(payload)
 }
 
 
@@ -80,9 +81,8 @@ function initBoardEvents() {
 
 function clearBoardEvents() {
     for(i=1; i<10; i++){
-        document.getElementById(`cell${i}`).addEventListener("click", playTurn);
+        document.getElementById(`cell${i}`).removeEventListener("click", playTurn);
     }
-    document.getElementById('reset-game').addEventListener("click", resetGame);
 }
 
 function resetGame() {
@@ -95,14 +95,7 @@ function resetGame() {
     updateGameBoard();
 }
 
-function createGameBoard() {
-    // create new array with empty gameBoard template
-}
-
 function updateGameBoard() {
-    // take current player's marker and add it to the gameboard array
-    // check for game over
-    // toggle player turn
     let i = 0;
     gameBoard.forEach(element => {
         index = i + 1;
@@ -112,12 +105,17 @@ function updateGameBoard() {
     }); 
 };
 
+function updateTextDisplay(payload) {
+    let textContent = document.getElementById('game-header');
+    textContent.innerHTML = payload;
+}
+
 function playTurn() {
     let marker = "";
     let cell = this.id;
-    let element = document.getElementById(cell);
     let index = cell.slice(-1) - 1;
-
+    let element = document.getElementById(cell);
+    let currentPlayer = players[+game.getTurn()].getPlayerName();
 
     if(game.getTurn()) {
         marker = "O";
@@ -129,18 +127,47 @@ function playTurn() {
         element.innerHTML = marker;
         gameBoard[index] = marker;  
         game.toggleTurn();
+        let pnametemp = players[+game.getTurn()].getPlayerName();
+        let payload = `<h4>${pnametemp}'s turn.</h4>`;
+        updateTextDisplay(payload)
     } else {
-        alert("You can't play that square!");
+        let payload = "<h4>You can't play that square!</h4>";
+        updateTextDisplay(payload);
     }
 
-    gameOverCheck();
 
-    console.log(game.getTurn());
-    console.log(gameBoard);
+
+    if(gameOverCheck()) {
+        let payload = `<h4>${currentPlayer} wins!</h4>`;
+        updateTextDisplay(payload);
+        clearBoardEvents();
+        
+    };
+
+
+
+
+
+    updateGameBoard();
 }
 
 function gameOverCheck() {
-    // check if a winning scenario exists in gameboard array
+    let result = false;
+
+    if ((gameBoard[0] == gameBoard[1]) && (gameBoard[1] == gameBoard[2]) && gameBoard[0] != "") {
+        console.log('GAME OVER');
+        result = true;
+    } else {
+        console.log('Game not over yet');
+    }
+
+
+
+
+
+
+
+    return result;
 }
 
 function legalPlayCheck(index) {
@@ -153,4 +180,4 @@ function legalPlayCheck(index) {
 
 
 
-window.onload = updateGameBoard();
+// window.onload = updateGameBoard();

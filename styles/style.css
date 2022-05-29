@@ -10,6 +10,7 @@
     /* Global Variables */
     --tempGridOutline: red;
     --tempGridColor: rgb(251, 211, 137);
+    --cellSize: 200px;
 
 }
 
@@ -76,7 +77,7 @@ main {
     grid-area: 1 / 1 / 2 / 13;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
 }
 
 #left-side-container {
@@ -86,6 +87,9 @@ main {
     align-items: center;
     flex-direction: column;
     gap: 25px;
+    min-width: fit-content;
+    min-height: fit-content;
+    padding: 0 10px;
 }
 
 .game-btn {
@@ -100,31 +104,56 @@ main {
     border: 1px solid black;
 }
 
-#new-game {
-
-}
-
-#reset-game {
-
-}
-
-
 #right-side-container {
     grid-area: 2 / 10 / 9 / 13;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 5fr;
+    min-width: fit-content;
+    min-height: fit-content;
+    padding: 50px 10px;
+}
+
+#score-header {
+    width: 100%;
 }
 
 #player-one, #player-two {
-    width: 100%;
-    height: 10%;
     border-bottom: 1px solid black;
 }
 
-#score-divider {
-    width: 1px;
-    height: 20%;
-    background-color: black;
+#right-side-container > * {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+}
+
+#score-header {
+    grid-area: 1 / 1 / 2 / 3;
+    align-items: flex-start;
+    padding: 0;
+}
+
+#player-one {
+    grid-area: 2 / 1 / 3 / 2;
+    align-items: flex-end;
+    border-right: 1px solid black;
+}
+
+#player-two {
+    grid-area: 2 / 2 / 3 / 3;
+    align-items: flex-end;
+}
+
+#p1score { 
+    grid-area: 3 / 1 / 4 / 2;
+    align-items: flex-start;
+    border-right: 1px solid black;
+}
+
+#p2score {
+    grid-area: 3 / 2 / 4 / 3;
+    align-items: flex-start;
 }
 
 #game-board-container {
@@ -139,8 +168,8 @@ main {
 
 #game-board {
     box-sizing: content-box;
-    width: 450px;
-    height: 450px;
+    width: calc(var(--cellSize)*3);
+    height: calc(var(--cellSize)*3);
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -149,11 +178,11 @@ main {
 .cell {
     background-color: white;
     display: flex;
-    width: 150px;
-    height: 150px;
+    width: var(--cellSize);
+    height: var(--cellSize);
     align-items: center;
     justify-content: center;
-    font-size: 5rem;
+    font-size: 8rem;
     border: 1px solid black;
 }
 
