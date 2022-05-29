@@ -154,14 +154,24 @@ function playTurn() {
 function gameOverCheck() {
     let result = false;
 
-    if ((gameBoard[0] == gameBoard[1]) && (gameBoard[1] == gameBoard[2]) && gameBoard[0] != "") {
+    // if ((gameBoard[0] == gameBoard[1]) && (gameBoard[1] == gameBoard[2]) && gameBoard[0] != "") {
+    //     console.log('GAME OVER');
+    //     result = true;
+    // } else {
+    //     console.log('Game not over yet');
+    // }
+
+    let arr = [gameBoard[0], gameBoard[1], gameBoard[2]];
+    function test(cell) {
+        return cell == "X";
+    }
+
+    if (arr.every(test)) {
         console.log('GAME OVER');
         result = true;
     } else {
         console.log('Game not over yet');
     }
-
-
 
 
 
