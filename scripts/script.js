@@ -12,17 +12,19 @@ var gameBoard =
     "", "", "",
     "", "", ""];
 
-const newPlayer = (name, marker) => {
+const newPlayer = (name, marker, tag) => {
     let pname = name;
     let pmarker = marker;
+    let ptag = tag;
     let wins = 0;
 
     const getPlayerName = () => pname;
     const getWins = () => wins;
     const addWin = () => wins = wins + 1;
     const getMarker = () => pmarker;
+    const getTag = () => ptag;
 
-    return { addWin, getWins, getPlayerName, getMarker };
+    return { addWin, getWins, getPlayerName, getMarker, getTag };
 };
 
 const initGame = () => {
@@ -46,8 +48,8 @@ const createPlayers = (numPlayers) => {
         p2name = "Computer";
     }
 
-    let player1 = newPlayer(p1name, "X");
-    let player2 = newPlayer(p2name, "O");
+    let player1 = newPlayer(p1name, "X", "p1score");
+    let player2 = newPlayer(p2name, "O", "p2score");
     players = [];
     players.push(player1, player2);
 
@@ -55,7 +57,7 @@ const createPlayers = (numPlayers) => {
     playerTwoText.innerHTML = `<h5>${players[1].getPlayerName()}</h5>`;
 
     return { players };
-}
+};
 
 function newGame() {
     resetGame();
@@ -67,8 +69,11 @@ function newGame() {
 
     let pnametemp = players[+game.getTurn()].getPlayerName();
     let payload = `<h4>${pnametemp}'s turn.</h4>`;
-    updateTextDisplay(payload)
-}
+    updateTextDisplay(payload);
+    updateScores("0", "p1score");    
+    updateScores("0", "p2score");
+
+};
 
 
 
@@ -77,13 +82,13 @@ function initBoardEvents() {
     for(i=1; i<10; i++){
         document.getElementById(`cell${i}`).addEventListener("click", playTurn);
     }
-}
+};
 
 function clearBoardEvents() {
     for(i=1; i<10; i++){
         document.getElementById(`cell${i}`).removeEventListener("click", playTurn);
     }
-}
+};
 
 function resetGame() {
     console.log("reset game pressed");
@@ -93,7 +98,7 @@ function resetGame() {
         i++;
     }); 
     updateGameBoard();
-}
+};
 
 function updateGameBoard() {
     let i = 0;
@@ -108,7 +113,7 @@ function updateGameBoard() {
 function updateTextDisplay(payload) {
     let textContent = document.getElementById('game-header');
     textContent.innerHTML = payload;
-}
+};
 
 function playTurn() {
     let marker = "";
@@ -124,61 +129,82 @@ function playTurn() {
     };
     
     if(legalPlayCheck(index)) {
+
         element.innerHTML = marker;
         gameBoard[index] = marker;  
-        game.toggleTurn();
-        let pnametemp = players[+game.getTurn()].getPlayerName();
-        let payload = `<h4>${pnametemp}'s turn.</h4>`;
-        updateTextDisplay(payload)
+
+        if(gameOverCheck()) {
+            let payload = `<h4>${currentPlayer} wins!</h4>`;
+            updateTextDisplay(payload);
+            clearBoardEvents();
+            players[+game.getTurn()].addWin();
+            let newScore = players[+game.getTurn()].getWins();
+            let playerTag = players[+game.getTurn()].getTag();
+            updateScores(newScore, playerTag);
+        } else {
+            game.toggleTurn();
+            let pnametemp = players[+game.getTurn()].getPlayerName();
+            let payload = `<h4>${pnametemp}'s turn.</h4>`;
+            updateTextDisplay(payload);
+        }
+
     } else {
         let payload = "<h4>You can't play that square!</h4>";
         updateTextDisplay(payload);
     }
 
-
-
-    if(gameOverCheck()) {
-        let payload = `<h4>${currentPlayer} wins!</h4>`;
-        updateTextDisplay(payload);
-        clearBoardEvents();
-        
-    };
-
-
-
-
-
     updateGameBoard();
-}
+};
 
 function gameOverCheck() {
     let result = false;
+    let decision = false;
+    let i = 0;
+    let winConditions = [
+        [gameBoard[0], gameBoard[1], gameBoard[2]],
+        [gameBoard[3], gameBoard[4], gameBoard[5]],
+        [gameBoard[6], gameBoard[7], gameBoard[8]],
+        [gameBoard[0], gameBoard[4], gameBoard[8]],
+        [gameBoard[2], gameBoard[4], gameBoard[6]],
+        [gameBoard[0], gameBoard[3], gameBoard[6]],
+        [gameBoard[1], gameBoard[4], gameBoard[7]],
+        [gameBoard[2], gameBoard[5], gameBoard[8]]
+    ];
+    
+    function test(condition) {
+        let arr = condition;
 
-    // if ((gameBoard[0] == gameBoard[1]) && (gameBoard[1] == gameBoard[2]) && gameBoard[0] != "") {
-    //     console.log('GAME OVER');
-    //     result = true;
-    // } else {
-    //     console.log('Game not over yet');
-    // }
+        function compareX(item) {
+            if (item == "X") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function compareO(item) {
+            if (item == "O") {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-    let arr = [gameBoard[0], gameBoard[1], gameBoard[2]];
-    function test(cell) {
-        return cell == "X";
+        if (arr.every(compareX)) {
+            result = true;
+        } else if (arr.every(compareO)) {
+            result = true;
+        } else {
+        }
+        return result;
+    };
+
+    while (!decision && i < 8){
+        decision = test(winConditions[i]);
+        i++;
     }
 
-    if (arr.every(test)) {
-        console.log('GAME OVER');
-        result = true;
-    } else {
-        console.log('Game not over yet');
-    }
-
-
-
-
-
-    return result;
-}
+    return decision;
+};
 
 function legalPlayCheck(index) {
     if(gameBoard[index] == ""){
@@ -186,8 +212,25 @@ function legalPlayCheck(index) {
     } else {
         return false;
     }
-}
+};
 
+function updateScores(newScore, playerTag) {
+    let scoreContent = document.getElementById(playerTag);
+    let score = newScore;
+    scoreContent.innerHTML = `<h5>${score}</h5>`;
 
+};
+
+function playAgain(){
+    gameBoard = 
+    ["", "", "",
+    "", "", "",
+    "", "", ""];
+    updateGameBoard(gameBoard);
+    initBoardEvents();
+    let pnametemp = players[0].getPlayerName();
+    let payload = `<h4>${pnametemp}'s turn.</h4>`;
+    updateTextDisplay(payload);
+};
 
 // window.onload = updateGameBoard();
