@@ -141,6 +141,10 @@ function playTurn() {
             let newScore = players[+game.getTurn()].getWins();
             let playerTag = players[+game.getTurn()].getTag();
             updateScores(newScore, playerTag);
+        } else if(tieCheck()) {
+            let payload = `<h4>Tie game. Click Play Again!</h4>`;
+            updateTextDisplay(payload);
+            clearBoardEvents();
         } else {
             game.toggleTurn();
             let pnametemp = players[+game.getTurn()].getPlayerName();
@@ -179,39 +183,50 @@ function gameOverCheck() {
                 return true;
             } else {
                 return false;
-            }
-        }
+            };
+        };
         function compareO(item) {
             if (item == "O") {
                 return true;
             } else {
                 return false;
-            }
-        }
+            };
+        };
 
         if (arr.every(compareX)) {
             result = true;
         } else if (arr.every(compareO)) {
             result = true;
         } else {
-        }
+        };
         return result;
     };
 
     while (!decision && i < 8){
         decision = test(winConditions[i]);
         i++;
-    }
+    };
 
     return decision;
 };
+
+function tieCheck() {
+    let result = true;
+    for (let index = 0; index < gameBoard.length; index++) {
+        if (gameBoard[index] == "") {
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
 
 function legalPlayCheck(index) {
     if(gameBoard[index] == ""){
         return true;
     } else {
         return false;
-    }
+    };
 };
 
 function updateScores(newScore, playerTag) {
