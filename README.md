@@ -1,7 +1,7 @@
 # PROJECT: TIC TAC TOE
 ### A Tic Tac Toe game created in HTML, CSS, and JavaScript
 
-You can see the finished project [here!](https://tommygatz.github.com/tic-tac-toe/)
+You can see the finished project [here!](https://tommygatz.github.io/tic-tac-toe/)
 <br><br><br>
 
 
