@@ -1,16 +1,19 @@
 
 const newGameBtn = document.getElementById('new-game');
+const playAgainBtn = document.getElementById('play-again');
 const playerOneText = document.getElementById('player-one');
 const playerTwoText = document.getElementById('player-two');
 
 newGameBtn.addEventListener("click", newGame); 
+playAgainBtn.addEventListener("click", playAgain);
 
 var players = [];
 var game = [];
-var gameBoard = 
+var emptyBoard = 
     ["", "", "",
     "", "", "",
     "", "", ""];
+var gameBoard = emptyBoard;
 
 const newPlayer = (name, marker, tag) => {
     let pname = name;
@@ -63,9 +66,11 @@ function newGame() {
     resetGame();
     initBoardEvents();
 
-    const numPlayers = window.prompt("How many players?");
+    // const numPlayers = window.prompt("How many players?");
+    // createPlayers(numPlayers);
+
     game = initGame();
-    createPlayers(numPlayers);
+    createPlayers(2);
 
     let pnametemp = players[+game.getTurn()].getPlayerName();
     let payload = `<h4>${pnametemp}'s turn.</h4>`;
@@ -91,13 +96,13 @@ function clearBoardEvents() {
 };
 
 function resetGame() {
-    console.log("reset game pressed");
     let i = 0;
     gameBoard.forEach(element => {
         gameBoard[i] = "";
         i++;
     }); 
     updateGameBoard();
+    playAgainBtn.style.display = "none";
 };
 
 function updateGameBoard() {
@@ -141,6 +146,7 @@ function playTurn() {
             let newScore = players[+game.getTurn()].getWins();
             let playerTag = players[+game.getTurn()].getTag();
             updateScores(newScore, playerTag);
+            playAgainBtn.style.display = "flex";
         } else if(tieCheck()) {
             let payload = `<h4>Tie game. Click Play Again!</h4>`;
             updateTextDisplay(payload);
@@ -237,10 +243,7 @@ function updateScores(newScore, playerTag) {
 };
 
 function playAgain(){
-    gameBoard = 
-    ["", "", "",
-    "", "", "",
-    "", "", ""];
+    resetGame();
     updateGameBoard(gameBoard);
     initBoardEvents();
     let pnametemp = players[0].getPlayerName();
@@ -248,4 +251,3 @@ function playAgain(){
     updateTextDisplay(payload);
 };
 
-// window.onload = updateGameBoard();
